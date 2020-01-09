@@ -12,7 +12,6 @@ from selenium.webdriver.common.by import By
 import datetime
 
 
-
 class VirginPulseAuto:
 	def __init__(self, driver, link, user, password):
 		self.link = link
@@ -20,26 +19,26 @@ class VirginPulseAuto:
 		self.password = password
 		self.driver = driver
 
-
 	def visit_url(self):
 		self.driver.get(self.link)
 
 	def login_into_virginpulse(self):
-		self.driver.find_element_by_id('oUserID').send_keys(self.user + Keys.TAB)
-		self.driver.find_element_by_id('oPwdID').send_keys(self.password)
-		time.sleep(1)
-		self.driver.find_element_by_id('oLogon').click()
-		time.sleep(10)
+		self.element_is_visible('username')
+		self.driver.find_element_by_id('username').send_keys(self.user)
+		elem = self.driver.find_element_by_id('password')
+		elem.send_keys(self.password)
+		elem.send_keys(Keys.ENTER)
 
-	def element_is_visible(self):
+	def element_is_visible(self, ID):
 		timeout = 5
 		try:
-			element_present = EC.presence_of_element_located((By.ID, 'close-trophy-popup-wrapper'))
+			element_present = EC.presence_of_element_located((By.ID, ID))
 			WebDriverWait(self.driver, timeout).until(element_present)
 		except TimeoutException:
-			print "Timed out waiting for page to load"
+			print("Timed out waiting for page to load")
 
 	def close_trophy_popup(self):
+		self.element_is_visible('close-trophy-popup-wrapper')
 		try:
 			elem = self.driver.find_element_by_class_name('close-trophy-popup-wrapper')
 			if elem.is_displayed():
@@ -94,16 +93,12 @@ class VirginPulseAuto:
 		self.driver.close()
 
 
-
 #driver = webdriver.Chrome()
 driver = webdriver.Chrome('/Users/ripudamanflora/Downloads/chromedriver')
 
 vgPulse = VirginPulseAuto(driver, 'https://member.virginpulse.com/login.aspx', '<ENTER USERNAME>', '<ENTER PASSWORD>')
 vgPulse.visit_url()
 vgPulse.login_into_virginpulse()
-
-#make sure element is visible
-vgPulse.element_is_visible()
 
 #Close trophy pop up
 vgPulse.close_trophy_popup()
@@ -119,13 +114,3 @@ vgPulse.check_healthy_habits()
 
 #Close the browser
 vgPulse.close_browser()
-
-
-
-
-
-
-
-
-
-
